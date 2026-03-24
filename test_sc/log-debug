@@ -1,0 +1,23 @@
+#!/usr/bin/env bash
+FILE="$1"
+
+if [ -z "$FILE" ]; then
+  echo "Usage: log-debug <log_file>"
+  exit 1
+fi
+
+gemini -f "$FILE" "
+你是一位資深工程師，熟悉 Python、FastAPI、Docker、Linux、MongoDB 與 AOI 系統。
+
+請分析這份 log。
+
+請輸出：
+
+# Summary
+# Root Causes（由高到低）
+# Verification Steps（具體指令）
+# Fix Suggestions（workaround + 正式解）
+# Risks / Notes
+
+請避免模糊回答，請具體。
+"

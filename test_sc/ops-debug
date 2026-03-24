@@ -1,0 +1,23 @@
+#!/usr/bin/env bash
+FILE="$1"
+
+if [ -z "$FILE" ]; then
+  echo "Usage: ops-debug <log>"
+  exit 1
+fi
+
+gemini -f "$FILE" "
+你是一位熟悉 Docker、Linux、network、deployment 的工程師。
+
+請分析這個錯誤。
+
+請輸出：
+
+# Layer（OS / Docker / network / app / permission）
+# Root Causes
+# Debug Commands（可直接執行）
+# Fix Suggestions
+# Risks
+
+請提供具體指令。
+"

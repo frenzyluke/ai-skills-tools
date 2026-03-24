@@ -1,0 +1,25 @@
+#!/usr/bin/env bash
+
+if [ $# -eq 0 ]; then
+  echo 'Usage: change-log "describe your change"'
+  exit 1
+fi
+
+gemini "
+你是一位資深軟體工程師，擅長撰寫工程變更紀錄。
+
+請幫我整理這次修改的「變更紀錄」。
+
+內容：
+$*
+
+請輸出：
+
+# Background
+# Change
+# Reason
+# Impact
+# Result
+
+請具體且精簡。
+"

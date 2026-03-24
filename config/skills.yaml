@@ -1,0 +1,82 @@
+skills:
+
+  log-debug:
+    description: Analyze system or application logs
+    prompt: prompts/log_debug.txt
+    default_output: output/log-debug.md
+    log_file: logs/log-debug.log
+    output_mode: append
+    category: debug
+    tags: [log, system, debugging]
+
+  logic-debug:
+    description: Analyze code logic issues and edge cases
+    prompt: prompts/logic_debug.txt
+    default_output: output/logic-debug.md
+    log_file: logs/logic-debug.log
+    output_mode: append
+    category: debug
+    tags: [logic, code, debugging]
+
+  mongo-debug:
+    description: Analyze MongoDB query and performance issues
+    prompt: prompts/mongo_debug.txt
+    default_output: output/mongo-debug.md
+    log_file: logs/mongo-debug.log
+    output_mode: append
+    category: debug
+    tags: [mongodb, database, performance]
+
+  ops-debug:
+    description: Analyze deployment, Docker, and system-level issues
+    prompt: prompts/ops_debug.txt
+    default_output: output/ops-debug.md
+    log_file: logs/ops-debug.log
+    output_mode: append
+    category: debug
+    tags: [docker, linux, network, ops]
+
+  py-error:
+    description: Analyze Python errors and stack traces
+    prompt: prompts/py_error.txt
+    default_output: output/py-error.md
+    log_file: logs/py-error.log
+    output_mode: append
+    category: debug
+    tags: [python, error, traceback]
+
+  ask-logic:
+    description: Ask about system or code logic problems
+    prompt: prompts/ask_logic.txt
+    default_output: output/ask-logic.md
+    log_file: logs/ask-logic.log
+    output_mode: append
+    category: analysis
+    tags: [logic, design, aoi]
+
+  code-review:
+    description: Review code quality, performance, and maintainability
+    prompt: prompts/code_review.txt
+    default_output: output/code-review.md
+    log_file: logs/code-review.log
+    output_mode: append
+    category: review
+    tags: [code, review, performance]
+
+  change-log:
+    description: Generate structured change log from description
+    prompt: prompts/change_log.txt
+    default_output: output/change-log.md
+    log_file: logs/change-log.log
+    output_mode: append
+    category: documentation
+    tags: [changelog, documentation]
+
+  change-log-diff:
+    description: Generate change log from git diff input
+    prompt: prompts/change_log_diff.txt
+    default_output: output/change-log-diff.md
+    log_file: logs/change-log-diff.log
+    output_mode: append
+    category: documentation
+    tags: [git, diff, changelog]

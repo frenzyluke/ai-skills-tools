@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+
+if [ $# -eq 0 ]; then
+  echo "Usage: run-skill <skill> [args...]"
+  exit 1
+fi
+
+SKILL="$1"
+shift
+
+exec "$SKILL" "$@"

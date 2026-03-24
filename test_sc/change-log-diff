@@ -1,0 +1,45 @@
+#!/usr/bin/env bash
+
+DIFF_CONTENT="$(cat)"
+
+if [ -z "$DIFF_CONTENT" ]; then
+  echo "Usage: git diff | change-log-diff"
+  exit 1
+fi
+
+gemini "
+你是一位資深軟體工程師，擅長撰寫工程變更紀錄。
+
+以下是這次程式碼修改的 git diff：
+
+$DIFF_CONTENT
+
+請根據 diff 內容，整理這次修改的工程紀錄。
+
+請輸出：
+
+# Background
+- 原本問題或脈絡
+- 為什麼需要這次修改
+
+# Change
+- 這次修改了哪些重點
+- 涉及哪些邏輯 / 模組 / function
+
+# Reason
+- 為什麼採用這種修改方式
+- 這種改法相對合理的原因
+
+# Impact
+- 對系統可能帶來的影響
+- 包含穩定性、可維護性、效能、風險
+
+# Result
+- 預期改善結果
+- 是否還有待驗證項目
+
+要求：
+- 不要只重述 diff
+- 要用工程角度推斷修改目的
+- 內容簡潔、具體、可作為變更紀錄
+"

@@ -1,0 +1,23 @@
+#!/usr/bin/env bash
+FILE="$1"
+
+if [ -z "$FILE" ]; then
+  echo "Usage: mongo-debug <file>"
+  exit 1
+fi
+
+gemini -f "$FILE" "
+你是一位 MongoDB 與後端效能專家。
+
+請分析這個問題或 log。
+
+請輸出：
+
+# Problem Type（connection / query / index / timeout）
+# Root Causes
+# Verification Steps
+# Index Suggestion
+# Fix Suggestions（含 Python 實作）
+
+請具體說明 index 與 query 優化方式。
+"

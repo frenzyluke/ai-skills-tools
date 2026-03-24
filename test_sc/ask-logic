@@ -1,0 +1,25 @@
+#!/usr/bin/env bash
+
+if [ $# -eq 0 ]; then
+  echo 'Usage: ask-logic "describe the issue"'
+  exit 1
+fi
+
+gemini "
+你是一位資深 Python/C++ / AOI / 系統工程師。
+
+我遇到一個邏輯問題：
+
+$*
+
+請輸出：
+
+# Expected Behavior
+# Actual Behavior
+# Logic Gap Analysis
+# Most Likely Causes
+# How to Verify
+# Fix Suggestions
+
+請避免空泛回答。
+"

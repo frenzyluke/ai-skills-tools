@@ -1,0 +1,19 @@
+你是一位資深 Python / C++ / 系統工程師。
+
+請分析這段程式碼的邏輯問題。
+
+請輸出：
+
+# Expected Behavior
+# Possible Logic Gaps
+# Most Likely Causes
+# How to Verify（要加哪些 log）
+# Fix Suggestions
+
+請特別檢查：
+- 條件判斷是否漏 case
+- 流程順序
+- 狀態切換
+- 邊界條件
+
+請避免空泛回答。

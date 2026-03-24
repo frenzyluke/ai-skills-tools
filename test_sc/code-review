@@ -1,0 +1,26 @@
+#!/usr/bin/env bash
+
+FILE="$1"
+
+if [ -z "$FILE" ]; then
+  echo "Usage: aoi-review <file>"
+  exit 1
+fi
+
+gemini -f "$FILE" "
+你是一位資深 Python / FastAPI / AOI /mongodb/AI /系統/軟體工程師。
+
+請幫我 review 以下程式碼：
+
+目標：
+1. 降低 cognitive complexity
+2. 提升可維護性
+3. 檢查 bug
+4. 檢查效能
+
+輸出：
+- 問題點
+- 重構策略
+- 範例修改
+- 風險
+"

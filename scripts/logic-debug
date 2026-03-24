@@ -1,0 +1,200 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+BASE_DIR="/home/luke/pioneer/ai-skills-tools"
+PROMPT_FILE="/home/luke/pioneer/ai-skills-tools/prompts/logic_debug.txt"
+DEFAULT_OUTPUT="output/logic-debug.md"
+DEFAULT_LOG="logs/logic-debug.log"
+OUTPUT_MODE="append"
+SKILL_NAME="logic-debug"
+
+MAX_LINES=300
+
+FILE=""
+MESSAGE=""
+OUTPUT=""
+LOG_ENABLED="true"
+STDIN_CONTENT=""
+
+usage() {
+  cat <<EOF
+Usage:
+  $SKILL_NAME [-f FILE] [-m MESSAGE] [-o OUTPUT_FILE] [--no-log]
+
+Examples:
+  $SKILL_NAME -f app.py
+  $SKILL_NAME -m "分析這段邏輯"
+  git diff | $SKILL_NAME
+EOF
+}
+
+# -------------------------
+# parse args
+# -------------------------
+while [[ $# -gt 0 ]]; do
+  case "$1" in
+    -f|--file)
+      FILE="${2:-}"
+      shift 2
+      ;;
+    -m|--message)
+      MESSAGE="${2:-}"
+      shift 2
+      ;;
+    -o|--output)
+      OUTPUT="${2:-}"
+      shift 2
+      ;;
+    --no-log)
+      LOG_ENABLED="false"
+      shift
+      ;;
+    -h|--help)
+      usage
+      exit 0
+      ;;
+    *)
+      echo "Unknown arg: $1"
+      usage
+      exit 1
+      ;;
+  esac
+done
+
+# -------------------------
+# read stdin
+# -------------------------
+if [ ! -t 0 ]; then
+  STDIN_CONTENT="$(cat)"
+  
+  LINE_COUNT=$(echo "$STDIN_CONTENT" | wc -l)
+
+  if (( LINE_COUNT > MAX_LINES )); then
+    echo "Error: stdin too large ($LINE_COUNT lines > $MAX_LINES)"
+    echo "Tip: use head -n 300 | $SKILL_NAME"
+    exit 1
+  fi
+fi
+
+# -------------------------
+# validation
+# -------------------------
+if [[ -z "$FILE" && -z "$MESSAGE" && -z "$STDIN_CONTENT" ]]; then
+  echo "Error: no input provided"
+  usage
+  exit 1
+fi
+
+if [[ -n "$FILE" && ! -f "$FILE" ]]; then
+  echo "Error: file not found: $FILE"
+  exit 1
+fi
+
+if [[ -z "$OUTPUT" ]]; then
+  OUTPUT="$BASE_DIR/output/logic-debug.md"
+fi
+
+LOG_PATH="$BASE_DIR/logs/logic-debug.log"
+
+mkdir -p "$(dirname "$OUTPUT")"
+mkdir -p "$(dirname "$LOG_PATH")"
+
+PROMPT_CONTENT="$(cat "$PROMPT_FILE")"
+
+FULL_PROMPT="$PROMPT_CONTENT"
+
+if [[ -n "$MESSAGE" ]]; then
+  FULL_PROMPT="$FULL_PROMPT
+
+[User Message]
+$MESSAGE"
+fi
+
+if [[ -n "$STDIN_CONTENT" ]]; then
+  FULL_PROMPT="$FULL_PROMPT
+
+[Input]
+$STDIN_CONTENT"
+fi
+
+# -------------------------
+# logging
+# -------------------------
+if [[ "$LOG_ENABLED" == "true" ]]; then
+  {
+    echo "===== $(date '+%Y-%m-%d %H:%M:%S') ====="
+    echo "skill: $SKILL_NAME"
+    echo "file: $FILE"
+    echo "message: $MESSAGE"
+    echo "has_stdin: $([[ -n "$STDIN_CONTENT" ]] && echo yes || echo no)"
+    echo
+  } >> "$LOG_PATH"
+fi
+
+# -------------------------
+# run gemini
+# -------------------------
+if [[ -n "$FILE" ]]; then
+  RESULT="$(gemini -f "$FILE" "$FULL_PROMPT")"
+else
+  RESULT="$(gemini "$FULL_PROMPT")"
+fi
+
+TIMESTAMP="$(date '+%Y-%m-%d %H:%M:%S')"
+
+# -------------------------
+# build markdown content
+# -------------------------
+if [[ "$OUTPUT_MODE" == "append" ]]; then
+  if [[ ! -f "$OUTPUT" ]]; then
+    cat > "$OUTPUT" <<EOF
+# Skill Output: $SKILL_NAME
+EOF
+  fi
+
+  BLOCK_CONTENT="$(cat <<EOF
+
+---
+
+## $TIMESTAMP
+- File: $FILE
+- Message: $MESSAGE
+
+$RESULT
+EOF
+)"
+else
+  BLOCK_CONTENT="$(cat <<EOF
+# Skill Output: $SKILL_NAME
+
+## $TIMESTAMP
+- File: $FILE
+- Message: $MESSAGE
+
+$RESULT
+EOF
+)"
+fi
+
+# -------------------------
+# save output file only
+# -------------------------
+if [[ "$OUTPUT_MODE" == "append" ]]; then
+  printf "%s\n" "$BLOCK_CONTENT" >> "$OUTPUT"
+else
+  printf "%s\n" "$BLOCK_CONTENT" > "$OUTPUT"
+fi
+
+# -------------------------
+# log result
+# -------------------------
+if [[ "$LOG_ENABLED" == "true" ]]; then
+  echo "[saved] $OUTPUT" >> "$LOG_PATH"
+fi
+
+# -------------------------
+# terminal display: result only
+# -------------------------
+echo "$RESULT"
+echo
+echo "Saved → $OUTPUT"
